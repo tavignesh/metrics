@@ -16,7 +16,7 @@ jobs:
           # Your GitHub token
           token: ${{ secrets.METRICS_TOKEN }}
           plugin_isocalendar: yes
-          plugin_isocalendar_duration: full-year # Display full year instead of half year
+          plugin_isocalendar_duration: half-year # Display full year instead of half year
           plugin_lines: yes
           plugin_notable: yes
           plugin_notable_filter: stars:>500 # Only display repositories with 500 stars or more (syntax based on GitHub search query)
