@@ -1,14 +1,13 @@
 //Setup
-export default async function({login, data, imports, q, queries, account}, {enabled = false} = {}) {
+export default async function({login, data, imports, q, queries, account}, {enabled = false, extras = false} = {}) {
   //Plugin execution
   try {
     //Check if plugin is enabled and requirements are met
-    if ((!enabled) || (!q.posts))
+    if ((!q.posts) || (!imports.metadata.plugins.posts.enabled(enabled, {extras})))
       return null
 
     //Load inputs
     let {source, descriptions, covers, limit, user} = imports.metadata.plugins.posts.inputs({data, account, q})
-
     //Retrieve posts
     console.debug(`metrics/compute/${login}/plugins > posts > processing with source ${source}`)
     let posts = null
@@ -16,22 +15,23 @@ export default async function({login, data, imports, q, queries, account}, {enab
     switch (source) {
       //Dev.to
       case "dev.to": {
+        user = user.toLowerCase()
         console.debug(`metrics/compute/${login}/plugins > posts > querying api`)
-        posts = (await imports.axios.get(`https://dev.to/api/articles?username=${user}&state=fresh`)).data.map(({title, description, published_at:date, cover_image:image, url:link}) => ({title, description, date, image, link}))
+        posts = (await imports.axios.get(`https://dev.to/api/articles?username=${user}&state=fresh`)).data.map(({title, description, published_at: date, cover_image: image, url: link}) => ({title, description, date, image, link}))
         link = `https://dev.to/${user}`
         break
       }
       //Hashnode
       case "hashnode": {
-        posts = (await imports.axios.post("https://api.hashnode.com", {query:queries.posts.hashnode({user})}, {headers:{"Content-type":"application/json"}})).data.data.user.publication.posts.map((
-          {title, brief:description, dateAdded:date, coverImage:image, slug},
-        ) => ({title, description, date, image, link:`https://hashnode.com/post/${slug}`}))
+        posts = (await imports.axios.post("https://api.hashnode.com", {query: queries.posts.hashnode({user})}, {headers: {"Content-type": "application/json"}})).data.data.user.publication.posts.map((
+          {title, brief: description, dateAdded: date, coverImage: image, slug},
+        ) => ({title, description, date, image, link: `https://hashnode.com/post/${slug}`}))
         link = `https://hashnode.com/@${user}`
         break
       }
       //Unsupported
       default:
-        throw {error:{message:`Unsupported source "${source}"`}}
+        throw {error: {message: `Unsupported source "${source}"`}}
     }
 
     //Format posts
@@ -44,19 +44,17 @@ export default async function({login, data, imports, q, queries, account}, {enab
       //Cover images
       if (covers) {
         console.debug(`metrics/compute/${login}/plugins > posts > formatting cover images`)
-        posts = await Promise.all(posts.map(async ({image, ...post}) => ({image:await imports.imgb64(image, {width:144, height:-1}), ...post})))
+        posts = await Promise.all(posts.map(async ({image, ...post}) => ({image: await imports.imgb64(image, {width: 144, height: -1}), ...post})))
       }
       //Results
-      return {source, link, descriptions, covers, list:posts}
+      return {user, source, link, descriptions, covers, list: posts}
     }
 
     //Unhandled error
-    throw {error:{message:"An error occured (could not retrieve posts)"}}
+    throw {error: {message: "Failed to retrieve posts"}}
   }
   //Handle errors
   catch (error) {
-    if (error.error?.message)
-      throw error
-    throw {error:{message:"An error occured", instance:error}}
+    throw imports.format.error(error)
   }
 }

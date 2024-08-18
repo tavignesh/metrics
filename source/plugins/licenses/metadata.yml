@@ -1,34 +1,52 @@
-name: "📜 Repository licenses"
-cost: N/A
+name: 📜 Repository licenses
 category: github
-index: 4
+description: |
+  This plugin display repository license informations like permissions, limitations and conditions along with additional stats about dependencies.
+notes: |
+  > ⚠️ This is **NOT** legal advice, use at your own risk
+
+  > 💣 This plugin **SHOULD NOT** be enabled on web instances, since it allows raw command injection.
+  > This could result in compromised server!
+examples:
+  +permissions, limitations and conditions: https://github.com/lowlighter/metrics/blob/examples/metrics.plugin.licenses.svg
+  +licenses overview: https://github.com/lowlighter/metrics/blob/examples/metrics.plugin.licenses.ratio.svg
+index: 6
 supports:
   - repository
+scopes:
+  - public_access
 inputs:
 
-  # Enable or disable plugin
   plugin_licenses:
-    description: Display licenses informations
+    description: |
+      Enable licenses plugin
     type: boolean
     default: no
+    extras:
+      - metrics.cpu.overuse
+      - metrics.run.tempdir
+      - metrics.run.git
+      - metrics.run.licensed
+      - metrics.run.user.cmd
 
-  # Command to use to setup target repository
-  # It is required to install all dependencies that will be analyzed with github/licensed
   plugin_licenses_setup:
-    description: Command to setup target repository
+    description: |
+      Setup command
+
+      > ℹ️ Depending on the project, this may not be required.
+      > The example command is intended for NodeJs projects that use `npm` to install their dependencies.
     type: string
     default: ""
-    example: npm ci
+    example: "bash -c '[[ -f package.json ]] && npm ci || true'"
 
-  # Display used licenses from both repository license and dependencies licenses ratio
   plugin_licenses_ratio:
-    description: Display used licenses ratio
+    description: |
+      Used licenses ratio
     type: boolean
     default: no
 
-  # Display permissions, limitations and conditions from both repository license and dependencies licenses
-  # Note that this is NOT legal advice, use at your own risk
   plugin_licenses_legal:
-    description: Display legal informations about used licenses
+    description: |
+      Permissions, limitations and conditions about used licenses
     type: boolean
     default: yes

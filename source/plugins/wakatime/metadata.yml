@@ -1,71 +1,113 @@
-name: "⏰ WakaTime plugin"
-cost: N/A
+name: ⏰ WakaTime
 category: social
-index: 7
+description: |
+  This plugin displays statistics from a [WakaTime](https://wakatime.com) account.
+
+  It is also compatible with self-hosted instances from [wakapi](https://github.com/muety/wakapi).
+disclaimer: |
+  This plugin is not affiliated, associated, authorized, endorsed by, or in any way officially connected with [WakaTime](https://wakatime.com).
+  All product and company names are trademarks™ or registered® trademarks of their respective holders.
+examples:
+  default: https://github.com/lowlighter/metrics/blob/examples/metrics.plugin.wakatime.svg
+index: 8
 supports:
   - user
+scopes: []
 inputs:
 
-  # Enable or disable plugin
   plugin_wakatime:
-    description: Display WakaTime stats
+    description: |
+      Enable wakatime plugin
     type: boolean
     default: no
 
-  # WakaTime API token
-  # See https://wakatime.com/settings/account get your API key
   plugin_wakatime_token:
-    description: WakaTime API token
+    description: |
+      WakaTime API token
     type: token
     default: ""
 
-  # Time range to use for displayed stats
-  plugin_wakatime_days:
-    description: WakaTime time range
-    type: string
-    values:
-      - 7     # Last week
-      - 30    # Last month
-      - 180   # Last 6 months
-      - 365   # Last year
-    default: 7
-
-  # Sections to display
-  plugin_wakatime_sections:
-    description: Sections to display
-    type: array
-    values:
-      - time              # Show total coding time and daily average
-      - projects          # Show most time spent project
-      - projects-graphs   # Show most time spent projects graphs
-      - languages         # Show most language
-      - languages-graphs  # Show languages graphs
-      - editors           # Show most used code editor
-      - editors-graphs    # Show code editors graphs
-      - os                # Show most used operating system
-      - os-graphs         # Show code operating systems graphs
-    default: time, projects, projects-graphs, languages, languages-graphs, editors, os
-
-  # Number of entries to display per graph
-  # Set to 0 to disable limitations
-  plugin_wakatime_limit:
-    description: Maximum number of entries to display per graph
-    type: number
-    default: 5
-    min: 0
-
-  # If you use a selfhosted wakatime instance (wakapi)
-  # that is publicly available place your url here
-  #
-  # If you use the public wakapi instance the url
-  # would be https://wakapi.dev
   plugin_wakatime_url:
-    description: Address where to reach your Wakatime instance
+    description: |
+      WakaTime URL
+
+      Can be used to specify a [wakapi](https://github.com/muety/wakapi) instance
     type: string
     default: https://wakatime.com
 
-  # Username on Wakatime
   plugin_wakatime_user:
-    description: Your Wakatime user on the selfhosted Wakapi instance
+    description: |
+      WakaTime username
     type: string
     default: current
+    preset: no
+
+  plugin_wakatime_sections:
+    description: |
+      Displayed sections
+
+      - `time`: show total coding time and daily average
+      - `projects`: show most time spent project
+      - `projects-graphs`: show most time spent projects graphs
+      - `languages`: show most used language
+      - `languages-graphs`: show languages graphs
+      - `editors`: show most used code editor
+      - `editors-graphs`: show code editors graphs
+      - `os`: show most used operating system
+      - `os-graphs`: show operating systems graphs
+    type: array
+    values:
+      - time
+      - projects
+      - projects-graphs
+      - languages
+      - languages-graphs
+      - editors
+      - editors-graphs
+      - os
+      - os-graphs
+    default: time, projects, projects-graphs, languages, languages-graphs, editors, os
+
+  plugin_wakatime_days:
+    description: |
+      Time range
+    type: string
+    values:
+      - "7"
+      - "30"
+      - "180"
+      - "365"
+    default: 7
+
+  plugin_wakatime_limit:
+    description: |
+      Display limit (entries per graph)
+    type: number
+    default: 5
+    min: 0
+    zero: disable
+
+  plugin_wakatime_languages_other:
+    description: |
+      Other languages
+    type: boolean
+    default: no
+
+  plugin_wakatime_languages_ignored:
+    description: |
+      Ignored languages
+    type: array
+    format: comma-separated
+    default: ""
+    example: html, css, ...
+
+  plugin_wakatime_repositories_visibility:
+    description: |
+      Repositories visibility
+
+      Can be used to toggle private activity visibility
+    type: string
+    default: all
+    values:
+      - public
+      - all

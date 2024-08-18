@@ -112,3 +112,14 @@ source/templates/@*
 
 # Preview
 source/app/web/statics/preview
+
+# Presets
+.presets
+
+# V4
+.deno-make.json
+.coverage
+.secrets
+.test
+source/run/serve/static/app.js
+metrics.config.yml

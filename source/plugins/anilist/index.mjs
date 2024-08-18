@@ -1,23 +1,23 @@
 //Setup
-export default async function({login, data, queries, imports, q, account}, {enabled = false} = {}) {
+export default async function({login, data, queries, imports, q, account}, {enabled = false, extras = false} = {}) {
   //Plugin execution
   try {
     //Check if plugin is enabled and requirements are met
-    if ((!enabled) || (!q.anilist))
+    if ((!q.anilist) || (!imports.metadata.plugins.anilist.enabled(enabled, {extras})))
       return null
 
     //Load inputs
-    let {limit, "limit.characters":limit_characters, medias, sections, shuffle, user} = imports.metadata.plugins.anilist.inputs({data, account, q})
+    let {limit, "limit.characters": limit_characters, medias, sections, shuffle, user} = imports.metadata.plugins.anilist.inputs({data, account, q})
 
     //Initialization
-    const result = {user:{stats:null, genres:[]}, lists:Object.fromEntries(medias.map(type => [type, {}])), characters:[], sections}
+    const result = {user: {name: user, stats: null, genres: []}, lists: Object.fromEntries(medias.map(type => [type, {}])), characters: [], sections}
 
     //User statistics
     for (let retried = false; !retried; retried = true) {
       try {
         //Query API
         console.debug(`metrics/compute/${login}/plugins > anilist > querying api (user statistics)`)
-        const {data:{data:{User:{statistics:stats}}}} = await imports.axios.post("https://graphql.anilist.co", {variables:{name:user}, query:queries.anilist.statistics()})
+        const {data: {data: {User: {statistics: stats}}}} = await imports.axios.post("https://graphql.anilist.co", {variables: {name: user}, query: queries.anilist.statistics()})
         //Format and save results
         result.user.stats = stats
         result.user.genres = [...new Set([...stats.anime.genres.map(({genre}) => genre), ...stats.manga.genres.map(({genre}) => genre)])]
@@ -34,7 +34,7 @@ export default async function({login, data, queries, imports, q, account}, {enab
           try {
             //Query API
             console.debug(`metrics/compute/${login}/plugins > anilist > querying api (medias lists - ${type})`)
-            const {data:{data:{MediaListCollection:{lists}}}} = await imports.axios.post("https://graphql.anilist.co", {variables:{name:user, type:type.toLocaleUpperCase()}, query:queries.anilist.medias()})
+            const {data: {data: {MediaListCollection: {lists}}}} = await imports.axios.post("https://graphql.anilist.co", {variables: {name: user, type: type.toLocaleUpperCase()}, query: queries.anilist.medias()})
             //Format and save results
             for (const {name, entries} of lists) {
               //Format results
@@ -65,16 +65,17 @@ export default async function({login, data, queries, imports, q, account}, {enab
         do {
           try {
             console.debug(`metrics/compute/${login}/plugins > anilist > querying api (favorites ${type}s - page ${page})`)
-            const {data:{data:{User:{favourites:{[type]:{nodes, pageInfo:cursor}}}}}} = await imports.axios.post("https://graphql.anilist.co", {variables:{name:user, page}, query:queries.anilist.favorites({type})})
+            const {data: {data: {User: {favourites: {[type]: {nodes, pageInfo: cursor}}}}}} = await imports.axios.post("https://graphql.anilist.co", {variables: {name: user, page}, query: queries.anilist.favorites({type})})
             page++
             next = cursor.hasNextPage
-            list.push(...await Promise.all(nodes.map(media => format({media:{progess:null, score:null, media}, imports}))))
+            list.push(...await Promise.all(nodes.map(media => format({media: {progress: null, score: null, media}, imports}))))
           }
           catch (error) {
             if (await retry({login, imports, error}))
               continue
           }
-        } while (next)
+        }
+        while (next)
         //Format and save results
         result.lists[type].favorites = shuffle ? imports.shuffle(list) : list
         //Limit results
@@ -95,19 +96,20 @@ export default async function({login, data, queries, imports, q, account}, {enab
       do {
         try {
           console.debug(`metrics/compute/${login}/plugins > anilist > querying api (favorites characters - page ${page})`)
-          const {data:{data:{User:{favourites:{characters:{nodes, pageInfo:cursor}}}}}} = await imports.axios.post("https://graphql.anilist.co", {variables:{name:user, page}, query:queries.anilist.characters()})
+          const {data: {data: {User: {favourites: {characters: {nodes, pageInfo: cursor}}}}}} = await imports.axios.post("https://graphql.anilist.co", {variables: {name: user, page}, query: queries.anilist.characters()})
           page++
           next = cursor.hasNextPage
-          for (const {name:{full:name}, image:{medium:artwork}} of nodes) {
+          for (const {name: {full: name}, image: {medium: artwork}} of nodes) {
             console.debug(`metrics/compute/${login}/plugins > anilist > processing ${name}`)
-            characters.push({name, artwork:await imports.imgb64(artwork)})
+            characters.push({name, artwork: await imports.imgb64(artwork)})
           }
         }
         catch (error) {
           if (await retry({login, imports, error}))
             continue
         }
-      } while (next)
+      }
+      while (next)
       //Format and save results
       result.characters = shuffle ? imports.shuffle(characters) : characters
       //Limit results
@@ -122,31 +124,24 @@ export default async function({login, data, queries, imports, q, account}, {enab
   }
   //Handle errors
   catch (error) {
-    let message = "An error occured"
-    if (error.isAxiosError) {
-      const status = error.response?.status
-      console.log(error.response.data)
-      message = `API returned ${status}`
-      error = error.response?.data ?? null
-    }
-    throw {error:{message, instance:error}}
+    throw imports.format.error(error)
   }
 }
 
 /**Media formatter */
 async function format({media, imports}) {
-  const {progress, score:userScore, media:{title, description, status, startDate:{year:release}, genres, averageScore, episodes, chapters, type, coverImage:{medium:artwork}}} = media
+  const {progress, score: userScore, media: {title, description, status, startDate: {year: release}, genres, averageScore, episodes, chapters, type, coverImage: {medium: artwork}}} = media
   return {
-    name:title.romaji,
+    name: title.romaji,
     type,
     status,
     release,
     genres,
     progress,
-    description:description.replace(/<br\s*\\?>/g, " "),
-    scores:{user:userScore, community:averageScore},
-    released:type === "ANIME" ? episodes : chapters,
-    artwork:await imports.imgb64(artwork),
+    description: description?.replace(/<br\s*\\?>/g, " ") ?? "",
+    scores: {user: userScore, community: averageScore},
+    released: type === "ANIME" ? episodes : chapters,
+    artwork: await imports.imgb64(artwork),
   }
 }
 

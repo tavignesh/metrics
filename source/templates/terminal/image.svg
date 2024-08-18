@@ -6,7 +6,7 @@
 
   <defs><style><%= fonts %></style></defs>
 
-  <style>
+  <style data-optimizable="true">
     <%= style %>
       .stdin, .stdout {
         animation-duration: <%= meta.animations.stdin %>s;
@@ -28,6 +28,7 @@
         <% } %>
       <% } %>
   </style>
+  <style><%= extras.css %></style>
 
   <foreignObject x="0" y="0" width="100%" height="100%">
     <div xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -50,6 +51,7 @@ WARRANTY, to the extent permitted by applicable law.
 
 Last generated: <%= meta.generated %>
 </div><% } -%>
+<% if (warnings.length) { %><div class="warnings"><%- warnings.map(({warning}) => `WARN: ${warning.message}`).join("<br/>") %></div><% } %><%# -%>
 <% for (const partial of [...partials]) { %><%- await include(`partials/${partial}.ejs`) %><% } -%>
 <% if (base.metadata) { -%>
 

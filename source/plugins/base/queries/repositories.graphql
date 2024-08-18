@@ -5,15 +5,26 @@ query BaseRepositories {
         cursor
       }
       nodes {
+        updatedAt
         name
         owner {
           login
         }
         isFork
+        forkCount
         watchers {
           totalCount
         }
         stargazers {
+          totalCount
+        }
+        releases {
+          totalCount
+        }
+        deployments {
+          totalCount
+        }
+        environments {
           totalCount
         }
         languages(first: 8) {
@@ -24,6 +35,10 @@ query BaseRepositories {
               name
             }
           }
+        }
+        licenseInfo {
+          name
+          spdxId
         }
         issues_open: issues(states: OPEN) {
           totalCount
@@ -39,14 +54,6 @@ query BaseRepositories {
         }
         pr_merged: pullRequests(states: MERGED) {
           totalCount
-        }
-        releases {
-          totalCount
-        }
-        forkCount
-        licenseInfo {
-          name
-          spdxId
         }
       }
     }

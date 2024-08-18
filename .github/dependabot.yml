@@ -1,6 +1,9 @@
 version: 2
 updates:
   - package-ecosystem: npm
+    open-pull-requests-limit: 0 # Will not be managed by npm anymore in v4
+    labels:
+      - 📦 dependencies
     directory: /
     schedule:
       interval: weekly
@@ -8,8 +11,8 @@ updates:
       separator: "-"
     reviewers:
       - lowlighter
-    assignees:
-      - lowlighter
+    commit-message:
+      prefix: "chore(deps)"
     ignore:
       - dependency-name: "*"
         update-types:

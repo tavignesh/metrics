@@ -1,44 +1,84 @@
-name: "🌇 GitHub Skyline 3D calendar"
-cost: N/A
+name: 🌇 GitHub Skyline
 category: github
-index: 20
+description: |
+  This plugin displays the 3D commits calendar from [skyline.github.com](https://skyline.github.com/).
+notes: |
+  > ⚠️ This plugin significantly increase file size, consider using it as standalone.
+examples:
+  +GitHub Skyline: https://github.com/lowlighter/metrics/blob/examples/metrics.plugin.skyline.svg
+  GitHub City: https://github.com/lowlighter/metrics/blob/examples/metrics.plugin.skyline.city.svg
+index: 27
 supports:
   - user
+scopes: []
 inputs:
 
-  # Enable or disable plugin
   plugin_skyline:
-    description: Display GitHub Skyline 3D calendar
+    description: |
+      Enable skyline plugin
     type: boolean
     default: no
+    extras:
+      - metrics.cpu.overuse
+      - metrics.npm.optional.gifencoder
+      - metrics.run.puppeteer.scrapping
 
-  # Displayed year
   plugin_skyline_year:
-    description: Displayed year
+    description: |
+      Displayed year
     type: number
-    default: "current-year"
+    default: current-year
     min: 2008
 
-  # Number of frames
-  # Use 120 for a full-loop and 60 for a half-loop
   plugin_skyline_frames:
-    description: Number of frames
+    description: |
+      Frames count
+
+      Use 120 for a full-loop and 60 for a half-loop.
+      A higher number of frames will increase file size.
     type: number
     default: 60
     min: 1
     max: 120
 
-  # Image quality
   plugin_skyline_quality:
-    description: Image quality
+    description: |
+      Image quality
+
+      A higher image quality will increase file size.
     type: number
     default: 0.5
     min: 0.1
     max: 1
 
-  # This uses CSS animations instead of GIF to support a wider range of browser like FireFox and Safari
-  # Using this mode significantly increase file size as each frame is encoded separately
   plugin_skyline_compatibility:
-    description: Compatibility mode
+    description: |
+      Compatibility mode
+
+      This uses CSS animations rather than embedded GIF to support a wider range of browsers, like Firefox and Safari.
+      Using this mode significantly increase file size as each frame is encoded separately
     type: boolean
     default: no
+
+  plugin_skyline_settings:
+    description: |
+      Advanced settings
+
+      Can be configured to use alternate skyline websites different from [skyline.github.com](https://skyline.github.com), such as [honzaap's GitHub City](https://github.com/honzaap/GithubCity).
+
+      - `url`: Target URL (mandatory)
+      - `ready`: Readiness condition (A JS function that returns a boolean)
+      - `wait`: Time to wait after readiness condition is met (in seconds)
+      - `hide`: HTML elements to hide (A CSS selector)
+
+      For `url` and `ready` options, `${login}` and `${year}` will be respectively templated to user's login and specified year
+    type: json
+    default: |
+      {
+        "url": "https://skyline.github.com/${login}/${year}",
+        "ready": "[...document.querySelectorAll('span')].map(span => span.innerText).includes('Share on Twitter')",
+        "wait": 1,
+        "hide": "button, footer, a"
+      }
+    extras:
+      - metrics.run.puppeteer.user.js

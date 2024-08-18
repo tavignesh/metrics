@@ -35,10 +35,9 @@ rules:
 
   # Avoid visual pollution
   semi: [error, never]
-  semi-spacing: error
   semi-style: [error, first]
-  curly: [error, multi-or-nest]
   dot-notation: error
+  no-extra-semi: off
 
   # Avoid confusing code
   no-label-var: error
@@ -69,7 +68,7 @@ rules:
   # Code simplicity
   max-depth: [error, 10]
   max-nested-callbacks: error
-  max-params: [error, 3]
+  max-params: [error, 4]
   max-statements-per-line: error
   newline-per-chained-call: [error, {ignoreChainWithDepth: 6}]
   object-shorthand: error
@@ -82,7 +81,6 @@ rules:
   no-multiple-empty-lines: error
   no-multi-str: error
   no-multi-assign: error
-  no-inline-comments: error
   yoda: error
   max-classes-per-file: [error, 1]
   grouped-accessor-pairs: error
@@ -117,9 +115,6 @@ rules:
   quotes: [error, double, {avoidEscape: true}]
   template-curly-spacing: error
 
-  # Coding style (comments rules)
-  line-comment-position: error
-
   # Coding style (spacing rules)
   block-spacing: [error, always]
   comma-spacing: error
@@ -147,4 +142,3 @@ rules:
   no-extra-parens: [error, functions]
   arrow-body-style: [error, as-needed]
   arrow-parens: [error, as-needed]
-  implicit-arrow-linebreak: error

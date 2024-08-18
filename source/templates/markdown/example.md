@@ -1,32 +1,8 @@
 # 📒 Markdown template example
 
-This is a markdown template example which explain the basic usage of this template.
+See [rendering of this file here](https://github.com/lowlighter/metrics/blob/examples/metrics.markdown.full.md) and [original template source here](https://github.com/lowlighter/metrics/blob/master/source/templates/markdown/example.md).
 
-See [rendering of this file here](https://github.com/lowlighter/lowlighter/blob/master/metrics.markdown.full.md) and [original template source here](https://github.com/lowlighter/metrics/blob/master/source/templates/markdown/example.md).
-
-## 🈂️ Templating syntax:
-
-* Regular EJS syntax is supported
-* `{{` and `}}` will be interpolated as EJS brackets (syntaxic sugar)
-  * `{%` and `%}` can be used as control statements
-* Use [metrics.lecoq.io](https://metrics.lecoq.io/) with `config.output=json` to see available data
-  * You can also use `config_output: json` in GitHub Actions and/or inspect [metrics](https://github.com/lowlighter/metrics) code to get available data too
-* Same formatting helpers available in templates can be used too
-
-```markdown
-I joined GitHub on `{{ f.date(REGISTRATION_DATE, {dateStyle:"short"}) }}`.
-I contributed to `{{ REPOSITORIES_CONTRIBUTED_TO }}` repositories and made `{{ COMMITS }}` commits.
-```
-
-## 🧩 Plugins
-
-### Using markdown plugins
-
-Some plugins have their own **markdown** version which includes hyperlinks and reduce image overhead.
-
-See [compatibility matrix](https://github.com/lowlighter/metrics#-templateplugin-compatibily-matrix) for more informations.
-
-___
+## 🧩 Plugins with markdown version
 
 <%- await include(`partials/activity.ejs`) %>
 
@@ -40,34 +16,42 @@ ___
 
 ___
 
-<%- await include(`partials/tweets.ejs`) %>
+> ⚠️ As [Twitter](https://twitter.com) removed the ability to fetch tweets from their free API as part of their new [pricing policy](https://developer.twitter.com/en/docs/twitter-api/getting-started/about-twitter-api), this plugin is no longer maintained.
+
+<!-- <% if (false) { %> -->
+<<!-- -->%- await include(`partials/tweets.ejs`) %<!-- -->>
+<!-- <% } %> -->
+<!-- Example rendering before the plugin was deprecated
+<%- "--"+">" %>
+
+**[🐤 Latest tweets from @github](https://twitter.com/github)**
+> Putting that extra “+” in engineering culture, staff+ engineers lead by example, collaborate, make effective decisions, and support organizational goals. <span class="mention">@rynchantress</span> breaks it down.
+>
+> <a href="GitHub"><img src="https://images.ctfassets.net/s5uo95nf6njh/3sBQCkU6O0Lwc2Tp2LkMrU/e20b22c6ecaa66be267ebdf2d7774816/1920x1080-ReadMe-Site_Hero-Ryn_Daniels.jpg" alt="How to put the plus in ‘staff+’ engineer " height="200"></a>
+>
+> *19:22:01 on 6 Jun 2023*
+
+> It's never been more essential to ensure that your mobile applications are secure. 🔒 Check out two highlights from code scanning and Dependabot that are bringing a heightened level of security to the mobile development process in both Swift and Kotlin.
+>
+> <a href="The GitHub Blog"><img src="https://github.blog/wp-content/uploads/2023/05/1200.630-Security-wLogo.png" alt="Swift support brings broader mobile application security to GitHub Advanced Security | The GitHub Blog" height="200"></a>
+>
+> *16:48:16 on 6 Jun 2023*
+
+<%- "<"+"!--" %>
+-->
 
 ___
 
 <%- await include(`partials/topics.ejs`) %>
 
-### Embedding SVG metrics
-
-To include SVGs metrics images without creating additional jobs, use the `embed` function:
+## 🎈 Embedding SVG metrics on-the-fly
 
 <%- await embed(`example-isocalendar`, {isocalendar:true, isocalendar_duration:"full-year", config_display:"large"}) %>
 
+___
+
 <%- await embed(`example-languages-pdf`, {languages:true, languages_details:"percentage, bytes-size", config_display:"large"}) %>
 
-It takes two arguments:
-- An unique identifier which will be used as filename withing `markdown_cache` folder
-- Configuration options (see [action.yml](https://github.com/lowlighter/metrics/blob/master/action.yml))
-  - Tokens options are automatically passed down from your workflow job, do not pass them again
-
-Embed plugins must still be enabled at top-level in order to work:
-```yml
-- uses: lowlighter/metrics@latest
-  with:
-    isocalendar: yes
-    languages: yes
-```
-
-Note that unlike regular workflow jobs, `embed` function does not have `base` plugin enabled by default.
-If you wish to diplay parts of it, they must be explicitely enabled:
+___
 
 <%- await embed(`example-base-pdf`, {base:"activity, community, repositories"}) %>

@@ -1,41 +1,56 @@
-name: "🐤 Latest tweets"
-cost: N/A
+name: 🐤 Latest tweets
 category: social
-index: 3
+description: |
+  This plugin displays the latest tweets from a [Twitter](https://twitter.com) account.
+disclaimer: |
+  This plugin is not affiliated, associated, authorized, endorsed by, or in any way officially connected with [Twitter](https://twitter.com).
+  All product and company names are trademarks™ or registered® trademarks of their respective holders.
+deprecation: |
+  As [Twitter](https://twitter.com) removed the ability to fetch tweets from their free API as part of their new [pricing policy](https://developer.twitter.com/en/docs/twitter-api/getting-started/about-twitter-api), this plugin is no longer maintained.
+examples:
+  +latest tweets with attachments: https://github.com/lowlighter/metrics/blob/examples/metrics.plugin.tweets.attachments.svg
+  latest tweets: https://github.com/lowlighter/metrics/blob/examples/metrics.plugin.tweets.svg
+index: 1
 supports:
   - user
   - organization
+scopes: []
 inputs:
 
-  # Enable or disable plugin
   plugin_tweets:
-    description: Display recent tweets
+    description: |
+      Enable tweets plugin
     type: boolean
     default: no
+    extras:
+      - metrics.api.twitter.tweets
 
-  # Twitter API token
-  # See https://apps.twitter.com for more informations
   plugin_tweets_token:
-    description: Twitter API token
+    description: |
+      Twitter API token
     type: token
     default: ""
 
-  # Display tweets attachments (images, video previews, etc.)
+  plugin_tweets_user:
+    description: |
+      Twitter username
+    type: string
+    default: .user.twitter
+    preset: no
+
   plugin_tweets_attachments:
-    description: Display tweets attchments
+    description: |
+      Tweets attachments
+
+      Can be used to display linked images, video thumbnails, etc.
     type: boolean
     default: no
 
-  # Number of tweets to display
   plugin_tweets_limit:
-    description: Maximum number of tweets to display
+    description: |
+      Display limit
     type: number
     default: 2
     min: 1
     max: 10
 
-  # Twitter username
-  plugin_tweets_user:
-    description: Twitter username
-    type: string
-    default: .user.twitter

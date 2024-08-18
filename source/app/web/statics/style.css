@@ -10,6 +10,7 @@
   iframe {
     width: 100%;
     height: 100%;
+    min-height: 70vh;
   }
 
   a:hover {
@@ -25,7 +26,13 @@
     background-color: var(--color-header-bg);
   }
 
+  header.beta {
+    color: var(--color-text-warning);
+    background-color: var(--color-bg-warning);
+  }
+
   header svg {
+    color: currentColor;
     fill: currentColor;
     margin-right: 1rem;
     height: 2rem;
@@ -37,6 +44,10 @@
     text-decoration: none;
     font-weight: 600;
     font-size: 1.5rem;
+  }
+
+  header .grow {
+    flex-grow: 1;
   }
 
 /* Interface */
@@ -51,6 +62,8 @@
 
   .ui.top {
     border-bottom: 1px solid var(--color-border-secondary);
+    max-width: 1250px;
+    margin: 0 auto;
   }
   .ui.top > * {
     margin: 0 1rem;
@@ -119,20 +132,76 @@
   }
 
   .configuration {
+    background-image: linear-gradient(var(--color-alert-info-bg),var(--color-alert-info-bg));
+    color: var(--color-alert-info-text);
+    border: 1px solid var(--color-alert-info-border);
+    border-radius: 6px;
+    margin-top: .5rem;
     display: flex;
     flex-direction: column;
-    padding-top: 1rem;
-    margin: 1rem .5rem 0;
-    border-top: 1px solid var(--color-border-primary);
   }
 
-  .configuration .not-available {
+  .configuration .options:not(:empty) {
+    margin-top: .25rem;
+    border-top: 1px solid var(--color-alert-info-border);
+  }
+
+  .configuration.plugins {
+    width: 100%;
+  }
+
+  .configuration.plugins label {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .configuration.plugins .name {
+    font-weight: 500;
+  }
+
+  .configuration.not-available {
     color: var(--color-text-secondary);
+  }
+
+  .configuration.deprecated {
+    background-image: linear-gradient(var(--color-alert-warn-bg),var(--color-alert-info-bg));
+    color: var(--color-alert-warn-text);
+    border: 1px solid var(--color-alert-warn-border);
+    opacity: .8;
+  }
+
+  .configuration .not-available.deprecated {
+    display: none;
+  }
+
+  .category details {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .category summary {
+    font-weight: bold;
+    text-transform: capitalize;
   }
 
   .option {
     display: flex;
     flex-direction: column;
+    padding: .25rem;
+    overflow: hidden;
+  }
+
+  .option input[type=text], .option input[type=number], .option select {
+    width: 100%;
+  }
+
+  .option.unsupported {
+    background-image: linear-gradient(var(--color-bg-secondary),var(--color-bg-tertiary));
+    color: var(--color-text-secondary);
+    border-top: 1px solid var(--color-border-secondary);
+    border-bottom: 1px solid var(--color-border-secondary);
+    opacity: .8;
   }
 
 /* Preview */
@@ -187,7 +256,6 @@
   }
   label:hover {
     background-color: var(--color-input-contrast-bg);
-    border-radius: 6px;
   }
 
   input[type=text], input[type=number], select {
@@ -236,6 +304,32 @@
     outline: none;
   }
 
+  .oauth-github {
+    color: var(--color-text-primary) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: .4rem .6rem;
+    border-radius: 6px;
+    font-weight: 500;
+    background-color: var(--color-input-bg);
+    border: 1px solid var(--color-input-border);
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  .oauth-github.disabled {
+    opacity: .5;
+    pointer-events: none;
+  }
+  .oauth-github:hover {
+    text-decoration: none;
+  }
+  .oauth-github svg {
+    height: 1rem;
+    width: 1rem;
+    margin-right: .5rem;
+  }
+
 /* Links */
   a, a:hover, a:visited {
     color: var(--color-text-link);
@@ -263,7 +357,7 @@
   }
 
 /* Error */
-  .error {
+  .alert.error {
     padding: 1.25rem 1rem;
     background-image: linear-gradient(var(--color-alert-error-bg),var(--color-alert-error-bg));
     color: var(--color-alert-error-text);
@@ -342,4 +436,123 @@
 
   @keyframes loading-dots-keyframes {
     0% { transform: translateX(-100%); }
+  }
+
+/* Containers */
+  .container {
+    padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 920px;
+    margin: auto;
+    align-items: center;
+    margin: 2rem auto 1rem;
+  }
+  .text-center {
+    text-align: center;
+  }
+  .mb1 {
+    margin-bottom: 1rem;
+  }
+
+/* OAuth */
+  .badges-oauth {
+    display: flex;
+    align-items: center ;
+  }
+  .badges-oauth .border {
+    width: 4rem;
+    border-top: 3px dashed var(--color-border-secondary);
+  }
+  .badge-oauth {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    box-shadow: var(--color-shadow-medium);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #0D1117;
+  }
+  .oauth-scopes {
+    display: flex;
+  }
+  .oauth-scopes label {
+    margin: .5rem;
+  }
+  .oauth-revoke {
+    color: var(--color-text-danger);
+    background-color: var(--color-bg-danger);
+    border-color: var(--color-border-danger);
+    cursor: pointer;
+  }
+  .oauth small {
+    font-size: .8rem;
+    color: var(--color-text-secondary);
+    max-width: 80%;
+  }
+
+/* Search */
+  .search {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  .search.app {
+    padding: 1.5rem;
+    border: 1px solid var(--color-border-primary);
+    border-radius: 6px;
+  }
+  .search h2 {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    font-weight: normal;
+  }
+  .search h2 svg {
+    margin-right: .25rem;
+    fill: currentColor;
+    height: 1.25rem;
+    width: 1.25rem;
+  }
+  .search .about {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .search .about small {
+    font-size: .8rem;
+    color: var(--color-text-secondary);
+    text-align: left;
+  }
+  .search .inputs {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .search .inputs > * {
+    margin: .25rem;
+  }
+  .search .inputs input {
+    flex-grow: 1;
+  }
+  .search .inputs button {
+    min-width: 7rem;
+  }
+  .search .info {
+    color: var(--color-text-secondary);
+    margin-top: 1rem;
+  }
+  .search .info svg {
+    fill: currentColor;
+  }
+  @media only screen and (min-width: 740px)  {
+    .search {
+      width: 520px;
+    }
   }

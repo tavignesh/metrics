@@ -1,9 +1,9 @@
 //Setup
-export default async function({login, data, graphql, q, queries, imports, account}, {enabled = false} = {}) {
+export default async function({login, data, graphql, q, queries, imports, account}, {enabled = false, extras = false} = {}) {
   //Plugin execution
   try {
     //Check if plugin is enabled and requirements are met
-    if ((!enabled) || (!q.stars))
+    if ((!q.stars) || (!imports.metadata.plugins.stars.enabled(enabled, {extras})))
       return null
 
     //Load inputs
@@ -11,7 +11,7 @@ export default async function({login, data, graphql, q, queries, imports, accoun
 
     //Retrieve user stars from graphql api
     console.debug(`metrics/compute/${login}/plugins > stars > querying api`)
-    const {user:{starredRepositories:{edges:repositories}}} = await graphql(queries.stars({login, limit}))
+    const {user: {starredRepositories: {edges: repositories}}} = await graphql(queries.stars({login, limit}))
 
     //Format starred repositories
     for (const edge of repositories) {
@@ -30,8 +30,6 @@ export default async function({login, data, graphql, q, queries, imports, accoun
   }
   //Handle errors
   catch (error) {
-    if (error.error?.message)
-      throw error
-    throw {error:{message:"An error occured", instance:error}}
+    throw imports.format.error(error)
   }
 }

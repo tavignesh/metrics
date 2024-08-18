@@ -1,13 +1,20 @@
-name: "💭 GitHub Community Support"
-cost: N/A
+name: 💭 GitHub Community Support
 category: github
-index: 19
+description: |
+  This plugin displays statistics from a [GitHub Support Community](https://github.community/) account.
+deprecation: |
+  GitHub Support Community has been moved to [GitHub Discussions](https://github.blog/2022-07-26-launching-github-community-powered-by-github-discussions).
+examples:
+  default: https://github.com/lowlighter/metrics/blob/examples/metrics.plugin.support.svg
 supports:
   - user
+scopes: []
 inputs:
 
-  # Enable or disable plugin
   plugin_support:
-    description: GitHub Community Support metrics
+    description: |
+      Enable support plugin
     type: boolean
     default: no
+    extras:
+      - metrics.run.puppeteer.scrapping

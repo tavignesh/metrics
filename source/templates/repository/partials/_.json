@@ -8,7 +8,12 @@
   "stargazers",
   "people",
   "activity",
+  "posts",
+  "rss",
+  "screenshot",
+  "stock",
+  "crypto",
   "contributors",
-  "licenses",
-  "rss"
+  "sponsors",
+  "licenses"
 ]

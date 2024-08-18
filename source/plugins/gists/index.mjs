@@ -1,9 +1,9 @@
 //Setup
-export default async function({login, data, graphql, q, imports, queries, account}, {enabled = false} = {}) {
+export default async function({login, data, graphql, q, imports, queries, account}, {enabled = false, extras = false} = {}) {
   //Plugin execution
   try {
     //Check if plugin is enabled and requirements are met
-    if ((!enabled) || (!q.gists))
+    if ((!q.gists) || (!imports.metadata.plugins.gists.enabled(enabled, {extras})))
       return null
 
     //Load inputs
@@ -17,12 +17,13 @@ export default async function({login, data, graphql, q, imports, queries, accoun
       let pushed = 0
       do {
         console.debug(`metrics/compute/${login}/plugins > gists > retrieving gists after ${cursor}`)
-        const {user:{gists:{edges, nodes, totalCount}}} = await graphql(queries.gists({login, after:cursor ? `after: "${cursor}"` : ""}))
+        const {user: {gists: {edges, nodes, totalCount}}} = await graphql(queries.gists({login, after: cursor ? `after: "${cursor}"` : ""}))
         cursor = edges?.[edges?.length - 1]?.cursor
         gists.push(...nodes)
         gists.totalCount = totalCount
         pushed = nodes.length
-      } while ((pushed) && (cursor))
+      }
+      while ((pushed) && (cursor))
       console.debug(`metrics/compute/${login}/plugins > gists > loaded ${gists.length} gists`)
     }
 
@@ -41,12 +42,10 @@ export default async function({login, data, graphql, q, imports, queries, accoun
     }
 
     //Results
-    return {totalCount:gists.totalCount, stargazers, forks, files, comments}
+    return {totalCount: gists.totalCount, stargazers, forks, files, comments}
   }
   //Handle errors
   catch (error) {
-    if (error.error?.message)
-      throw error
-    throw {error:{message:"An error occured", instance:error}}
+    throw imports.format.error(error)
   }
 }
